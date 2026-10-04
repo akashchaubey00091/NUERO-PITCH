@@ -1,0 +1,6 @@
+{
+  "name": "NeuroPitch - AI Football Analytics Platform",
+  "description": "Professional AI-powered football analytics and player performance intelligence platform featuring computer vision tracking, tactical pitch visualization, spatial metrics, and sports science workload risk intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
