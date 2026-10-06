@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Activity,
   BarChart3,
@@ -7,6 +7,8 @@ import {
   Globe,
   HardDrive,
   Layers,
+  Maximize2,
+  Minimize2,
   Moon,
   ShieldAlert,
   Sun,
@@ -40,6 +42,41 @@ export const Header: React.FC<HeaderProps> = ({
   isOnline,
   activeRiskCount,
 }) => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        } else if ((document.documentElement as any).webkitRequestFullscreen) {
+          await (document.documentElement as any).webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch (err) {
+      console.warn('Fullscreen toggle encountered restriction:', err);
+      setIsFullscreen((prev) => !prev);
+    }
+  };
+
   const toggleDarkMode = () => {
     const updated = { ...settings, darkMode: !settings.darkMode };
     onUpdateSettings(updated);
@@ -79,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className={`font-mono text-[10px] font-black border px-2 py-0.5 rounded ${
               isDark ? 'text-[#8c919b] border-[#262933]' : 'text-slate-900 bg-white border-slate-300'
             }`}>
-              PRO OPTICAL TRACKING v3.8
+              STRUCTURED TRACKING ENGINE v3.8
             </span>
           </div>
 
@@ -149,6 +186,29 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-900" />}
+          </button>
+
+          {/* Full Screen Toggle Button */}
+          <button
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen'}
+            className={`p-2 rounded border transition-colors cursor-pointer font-black flex items-center gap-1.5 ${
+              isDark
+                ? 'bg-[#14161d] border-[#222631] text-[#9ca3af] hover:text-white'
+                : 'bg-white border-slate-300 text-slate-900 hover:text-black hover:bg-slate-100 shadow-xs'
+            }`}
+          >
+            {isFullscreen ? (
+              <>
+                <Minimize2 className="w-4 h-4 text-emerald-700" />
+                <span className="text-[11px] font-mono font-black hidden md:inline">EXIT FULLSCREEN</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-4 h-4 text-slate-900" />
+                <span className="text-[11px] font-mono font-black hidden md:inline">FULLSCREEN</span>
+              </>
+            )}
           </button>
         </div>
       </div>

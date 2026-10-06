@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   AlertCircle,
+  BookOpen,
   Check,
   CheckCircle2,
   Clock,
@@ -311,6 +312,25 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       </div>
 
+      {/* Project Architecture & Academic Viva Disclosure */}
+      <div className={`p-5 rounded-lg border shadow-xs ${
+        isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-white border-slate-300'
+      }`}>
+        <div className="flex items-center gap-2 mb-2 font-mono">
+          <BookOpen className="w-4 h-4 text-sky-700" />
+          <h3 className="font-black text-sm uppercase tracking-wider text-slate-900">
+            PROJECT ARCHITECTURE &amp; VIVA DISCLOSURE
+          </h3>
+        </div>
+        <p className="text-xs text-slate-800 leading-relaxed font-bold">
+          The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.
+        </p>
+        <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-700 space-y-1 font-sans">
+          <p><strong className="text-slate-950 font-bold">Implemented Analytical Pipeline:</strong> Convex hull compactness, centroid positioning, pitch dominance grids, metabolic power calculation (Osgnach), Gabbett ACWR workload distribution, kinematic zones, and offline persistence.</p>
+          <p><strong className="text-slate-950 font-bold">Target Specification Stage:</strong> Native computer vision model inference (YOLOv8 detector weights and ByteTrack multi-object tracking association) designed as future modular ingestion services.</p>
+        </div>
+      </div>
+
       {/* Thresholds & Theme Switcher */}
       <div className={`p-5 rounded-lg border shadow-xs ${
         isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-white border-slate-300'
@@ -356,9 +376,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div className="flex items-center justify-between py-2 border-b border-slate-200">
             <div>
-              <span className="font-black block text-slate-950 font-sans text-sm">YOLO Confidence Threshold</span>
+              <span className="font-black block text-slate-950 font-sans text-sm">Tracking Confidence Threshold Filter</span>
               <span className="text-slate-600 text-xs font-sans">
-                Minimum computer vision threshold for player bounding boxes.
+                Minimum confidence threshold for tracking coordinates (Benchmark target specification for future CV models).
               </span>
             </div>
 

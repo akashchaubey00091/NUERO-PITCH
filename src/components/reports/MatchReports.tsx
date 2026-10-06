@@ -98,7 +98,8 @@ export const MatchReports: React.FC<MatchReportsProps> = ({
     } catch {
       setAiReport({
         source: 'academic_computational_synthesis',
-        executiveSummary: `${matchSummary.title} featured high spatial compactness and structural transition control. Manchester City maintained 58.2% possession with a 46.8m high defensive line. Wide players exhibited high deceleration density (48+ braking cycles under -3.0 m/s²), while Arsenal restricted central passing channels with a compact 29.8m team length.`,
+        methodologyDisclosure: 'The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.',
+        executiveSummary: `The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage. Analysis of the match data indicates that ${matchSummary.title} featured high spatial compactness and structural transition control. Manchester City maintained 58.2% possession with a 46.8m high defensive line. Wide players exhibited high deceleration density (48+ braking cycles under -3.0 m/s²), while Arsenal restricted central passing channels with a compact 29.8m team length.`,
         tacticalOrganization: {
           possessionPhase: 'Manchester City employed John Stones as an inverted double pivot alongside Rodri, creating a 3-2 base that bypassed the first line of pressure.',
           defensiveStructure: 'Arsenal defended in a compact 4-4-2 mid-block; Odegaard and Havertz shadowed central passing lanes.',
@@ -313,6 +314,21 @@ export const MatchReports: React.FC<MatchReportsProps> = ({
               <span className="text-red-700">{matchSummary.score.away}</span>
             </div>
             <span className="text-xs text-slate-700 font-bold block mt-0.5">FULL TIME (94 MINS)</span>
+          </div>
+        </div>
+
+        {/* Academic Methodology & Viva Architecture Notice */}
+        <div className={`mt-4 p-4 rounded-lg border shadow-xs flex items-start gap-3 text-xs ${
+          isDark ? 'bg-[#0f141d] border-[#1e2a3a]' : 'bg-slate-50 border-slate-300'
+        }`}>
+          <BookOpen className="w-5 h-5 text-sky-700 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-mono font-black text-xs text-slate-900 uppercase block">
+              ACADEMIC VIVA &amp; METHODOLOGICAL IMPLEMENTATION DISCLOSURE
+            </span>
+            <p className="text-slate-800 font-bold leading-relaxed">
+              The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.
+            </p>
           </div>
         </div>
 

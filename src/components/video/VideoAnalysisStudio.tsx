@@ -8,7 +8,10 @@ import {
   Crosshair,
   Download,
   Eye,
+  Info,
   Layers,
+  Maximize2,
+  Minimize2,
   Pause,
   Play,
   RotateCcw,
@@ -53,6 +56,43 @@ export const VideoAnalysisStudio: React.FC<VideoAnalysisStudioProps> = ({
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoStudioContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsVideoFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  const toggleVideoFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (videoStudioContainerRef.current?.requestFullscreen) {
+          await videoStudioContainerRef.current.requestFullscreen();
+        } else if ((videoStudioContainerRef.current as any)?.webkitRequestFullscreen) {
+          await (videoStudioContainerRef.current as any).webkitRequestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch (err) {
+      console.warn('Video fullscreen toggle:', err);
+      setIsVideoFullscreen((prev) => !prev);
+    }
+  };
 
   const activeFrame = frames[currentFrameIndex] || frames[0];
 
@@ -453,23 +493,30 @@ export const VideoAnalysisStudio: React.FC<VideoAnalysisStudioProps> = ({
   ]);
 
   return (
-    <div className="space-y-4">
+    <div
+      ref={videoStudioContainerRef}
+      className={`space-y-4 ${
+        isVideoFullscreen
+          ? 'fixed inset-0 z-50 p-4 overflow-y-auto bg-slate-950 text-white flex flex-col'
+          : ''
+      }`}
+    >
       {/* Telemetry Bar */}
       <div className={`p-4 rounded-lg border shadow-xs grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono font-bold tabular-nums ${
         isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-white border-slate-300'
       }`}>
         <div>
-          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">TRACKING ACCURACY</span>
+          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">PROTOCOL FIDELITY</span>
           <div className="flex items-center gap-1.5 mt-1">
             <span className="text-2xl font-black text-emerald-700">
               {(matchSummary.meanTrackingConfidence * 100).toFixed(1)}%
             </span>
-            <span className="text-[10px] text-slate-600 font-bold">mAP</span>
+            <span className="text-[10px] text-slate-600 font-bold">TARGET mAP</span>
           </div>
         </div>
 
         <div>
-          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">ACTIVE DETECTIONS</span>
+          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">ACTIVE TRACKS</span>
           <span className={`text-xl font-black block mt-1 ${isDark ? 'text-white' : 'text-slate-950'}`}>
             {matchSummary.totalPlayersDetected} Players + Ball
           </span>
@@ -481,22 +528,38 @@ export const VideoAnalysisStudio: React.FC<VideoAnalysisStudioProps> = ({
             <span className="text-2xl font-black text-slate-950">
               {matchSummary.homographyReprojectionErrorM}m
             </span>
-            <span className="text-[10px] text-slate-600 font-bold">RMS</span>
+            <span className="text-[10px] text-slate-600 font-bold">TARGET RMS</span>
           </div>
         </div>
 
         <div>
-          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">INFERENCE ENGINE</span>
-          <span className="text-xl font-black text-sky-700 block mt-1">
-            YOLOv8 + ByteTrack
+          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">TRACKING DATA LAYER</span>
+          <span className="text-base font-black text-sky-700 block mt-1">
+            Structured Protocol Feed
           </span>
+          <span className="text-[10px] text-slate-600 font-bold">Simulated Demonstration</span>
         </div>
 
         <div>
-          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">PROCESSING TIMING</span>
+          <span className="block text-[11px] font-mono text-slate-700 font-bold uppercase">PROCESSING CADENCE</span>
           <span className="text-xl font-black text-slate-950 block mt-1">
             30 FPS · 33ms
           </span>
+        </div>
+      </div>
+
+      {/* Academic Methodology & Viva Notice */}
+      <div className={`p-4 rounded-lg border shadow-xs flex items-start gap-3 text-xs ${
+        isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-slate-50 border-slate-300'
+      }`}>
+        <Info className="w-5 h-5 text-sky-700 shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <h4 className="font-black text-slate-950 font-mono text-xs uppercase">
+            METHODOLOGICAL DISCLOSURE &amp; IMPLEMENTATION ARCHITECTURE
+          </h4>
+          <p className="text-slate-800 font-bold leading-relaxed">
+            The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.
+          </p>
         </div>
       </div>
 
@@ -516,21 +579,21 @@ export const VideoAnalysisStudio: React.FC<VideoAnalysisStudioProps> = ({
               <div className="absolute inset-0 bg-[#090b0e]/90 flex flex-col items-center justify-center text-center p-6 z-20">
                 <Camera className="w-8 h-8 text-[#00d26a] animate-pulse mb-3" />
                 <h4 className="font-bold text-white text-base mb-1 font-mono uppercase">
-                  Processing Match Clip
+                  Synchronizing Match Clip
                 </h4>
-                <p className="text-xs text-[#8c919b] max-w-sm mb-3 font-bold">
-                  Running homography calibration and DeepSORT tracking associations...
+                <p className="text-xs text-slate-300 max-w-sm mb-3 font-bold">
+                  Synchronizing video sequence with structured kinematic tracking schema. (Native computer-vision model inference is an upcoming integration stage).
                 </p>
                 <div className="w-64 bg-[#1e232d] h-2 rounded overflow-hidden mb-2">
                   <div className="bg-[#00d26a] h-full transition-all" style={{ width: `${uploadProgress}%` }} />
                 </div>
-                <span className="text-xs font-mono text-[#00d26a] font-bold">{uploadProgress}% complete</span>
+                <span className="text-xs font-mono text-[#00d26a] font-bold">{uploadProgress}% synchronized</span>
               </div>
             )}
 
             <div className="absolute top-2.5 left-2.5 flex items-center gap-2 text-xs font-mono font-bold bg-[#0c0e12]/90 border border-[#222733] px-3 py-1.5 rounded text-[#ececed] pointer-events-none">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping" />
-              <span>LIVE CV TRACKING</span>
+              <span>SIMULATED TRACKING FEED</span>
               <span className="text-[#555a64]">|</span>
               <span>FRAME {currentFrameIndex + 1}/{frames.length}</span>
               <span className="text-[#555a64]">|</span>
@@ -612,11 +675,37 @@ export const VideoAnalysisStudio: React.FC<VideoAnalysisStudioProps> = ({
               </div>
             </div>
 
-            <label className="flex items-center gap-1.5 px-3.5 py-2 rounded border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-900 font-black cursor-pointer font-mono text-xs transition-colors shadow-xs">
-              <Upload className="w-4 h-4 text-emerald-700" />
-              <span>UPLOAD MATCH CLIP (MP4/WEBM)</span>
-              <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={handleFileUpload} className="hidden" />
-            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleVideoFullscreen}
+                title={isVideoFullscreen ? 'Exit Full Screen Video' : 'Full Screen Video Player'}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded border font-mono font-black text-xs transition-colors cursor-pointer shadow-xs ${
+                  isVideoFullscreen
+                    ? 'bg-emerald-600 text-white border-emerald-600'
+                    : isDark
+                    ? 'border-[#242833] text-[#ececed] hover:bg-[#1a1d27]'
+                    : 'border-slate-300 bg-white hover:bg-slate-100 text-slate-900'
+                }`}
+              >
+                {isVideoFullscreen ? (
+                  <>
+                    <Minimize2 className="w-4 h-4 text-white" />
+                    <span className="hidden sm:inline">EXIT FULLSCREEN</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-4 h-4 text-slate-800" />
+                    <span className="hidden sm:inline">FULLSCREEN VIDEO</span>
+                  </>
+                )}
+              </button>
+
+              <label className="flex items-center gap-1.5 px-3.5 py-2 rounded border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-900 font-black cursor-pointer font-mono text-xs transition-colors shadow-xs">
+                <Upload className="w-4 h-4 text-emerald-700" />
+                <span>UPLOAD MATCH CLIP (MP4/WEBM)</span>
+                <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={handleFileUpload} className="hidden" />
+              </label>
+            </div>
           </div>
         </div>
 

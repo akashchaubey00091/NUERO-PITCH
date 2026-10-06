@@ -7,6 +7,7 @@ import {
   Grid,
   Layers,
   Maximize2,
+  Minimize2,
   Pause,
   Play,
   RotateCcw,
@@ -43,6 +44,45 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
   isDark,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pitchContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Fullscreen state
+  const [isPitchFullscreen, setIsPitchFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsPitchFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  const togglePitchFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (pitchContainerRef.current?.requestFullscreen) {
+          await pitchContainerRef.current.requestFullscreen();
+        } else if ((pitchContainerRef.current as any)?.webkitRequestFullscreen) {
+          await (pitchContainerRef.current as any).webkitRequestFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch (err) {
+      console.warn('Pitch fullscreen toggle:', err);
+      setIsPitchFullscreen((prev) => !prev);
+    }
+  };
 
   // Playback state
   const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
@@ -472,7 +512,14 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
   const awayDims = computeTeamDimensions(currentAwayPlayers);
 
   return (
-    <div className="space-y-3">
+    <div
+      ref={pitchContainerRef}
+      className={`space-y-3 ${
+        isPitchFullscreen
+          ? 'fixed inset-0 z-50 p-4 overflow-y-auto bg-slate-950 text-white flex flex-col'
+          : ''
+      }`}
+    >
       {/* Control Transport Bar */}
       <div className={`p-3 rounded-lg border shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs ${
         isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-white border-slate-300'
@@ -600,6 +647,31 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
               </button>
             ))}
           </div>
+
+          {/* Full Screen Pitch Toggle */}
+          <button
+            onClick={togglePitchFullscreen}
+            title={isPitchFullscreen ? 'Exit Full Screen Pitch' : 'Full Screen Tactical Pitch'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded border transition-colors cursor-pointer font-black text-xs ${
+              isPitchFullscreen
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                : isDark
+                ? 'border-[#242833] text-[#ececed] hover:bg-[#1a1d27]'
+                : 'border-slate-300 bg-white hover:bg-slate-100 text-slate-900 shadow-xs'
+            }`}
+          >
+            {isPitchFullscreen ? (
+              <>
+                <Minimize2 className="w-3.5 h-3.5 text-white" />
+                <span className="hidden sm:inline">EXIT FULLSCREEN</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-3.5 h-3.5 text-slate-800" />
+                <span className="hidden sm:inline">FULLSCREEN PITCH</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 

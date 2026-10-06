@@ -8,6 +8,7 @@ import {
   FileText,
   Flame,
   Gauge,
+  Info,
   Layers,
   ShieldAlert,
   TrendingUp,
@@ -80,7 +81,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             </div>
 
             <p className={`text-xs font-bold ${isDark ? 'text-[#8c919b]' : 'text-slate-800'}`}>
-              Optical Tracking Model: YOLOv8-Foot + ByteTrack · Reprojection RMS Error: {matchSummary.homographyReprojectionErrorM}m · Frame Latency: 33ms
+              Tracking Layer: Structured Optical Protocol (Simulated Demonstration Feed) · Homography Error Target: {matchSummary.homographyReprojectionErrorM}m · Native CV Inference: Future Integration Stage
             </p>
           </div>
 
@@ -121,21 +122,36 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         </div>
       </div>
 
+      {/* Academic Methodology & Viva Notice */}
+      <div className={`p-4 rounded-lg border shadow-xs flex items-start gap-3 text-xs ${
+        isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-slate-50 border-slate-300'
+      }`}>
+        <Info className="w-5 h-5 text-sky-700 shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <h4 className="font-black text-slate-950 font-mono text-xs uppercase">
+            METHODOLOGICAL DISCLOSURE &amp; IMPLEMENTATION ARCHITECTURE
+          </h4>
+          <p className="text-slate-800 font-bold leading-relaxed">
+            The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.
+          </p>
+        </div>
+      </div>
+
       {/* Primary KPI Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className={`p-3.5 rounded-lg border shadow-xs ${
           isDark ? 'bg-[#12141a] border-[#1e232d]' : 'bg-white border-slate-300'
         }`}>
           <span className="text-[11px] font-mono font-bold text-slate-700 block uppercase">
-            CV CONFIDENCE
+            PROTOCOL FIDELITY
           </span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className="text-2xl font-black font-mono tabular-nums text-emerald-700">
               {(matchSummary.meanTrackingConfidence * 100).toFixed(1)}%
             </span>
-            <span className="text-[10px] text-slate-600 font-bold font-mono">mAP</span>
+            <span className="text-[10px] text-slate-600 font-bold font-mono">TARGET mAP</span>
           </div>
-          <span className="text-[10px] text-slate-700 font-bold font-mono">22 Players + Ball</span>
+          <span className="text-[10px] text-slate-700 font-bold font-mono">Simulated Tracking Layer</span>
         </div>
 
         <div className={`p-3.5 rounded-lg border shadow-xs ${

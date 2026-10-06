@@ -21,6 +21,7 @@ async function startServer() {
     res.json({
       status: 'operational',
       engine: 'NeuroPitch Sports-Intelligence Core v3.8',
+      implementationNote: 'The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.',
       academicValidationStandard: 'FIFA Track / Catapult OpenSync / StatsBomb IQ',
       timestamp: new Date().toISOString()
     });
@@ -54,7 +55,8 @@ async function startServer() {
         // Return an academic-grade algorithmic fallback if API key is not yet configured
         return res.json({
           source: 'algorithmic_expert_engine',
-          executiveSummary: 'Match analysis confirms high territorial control for Home Team (58.4% spatial pitch control) with a structured 4-3-3 high-press defensive line at 46.2m. Physical load profiling indicates elevated mechanical strain on wide midfielders due to 48+ deceleration cycles exceeding -3.0 m/s².',
+          methodologyDisclosure: 'The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.',
+          executiveSummary: 'The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage. Analysis of the match data confirms high territorial control for Home Team (58.4% spatial pitch control) with a structured 4-3-3 high-press defensive line at 46.2m. Physical load profiling indicates elevated mechanical strain on wide midfielders due to 48+ deceleration cycles exceeding -3.0 m/s².',
           tacticalOrganization: {
             possessionPhase: 'Constructive build-up with double pivot dropping between center-backs to create +1 numerical superiority against 4-4-2 press.',
             defensiveStructure: 'Aggressive mid-to-high block with 32.4m team length compactness; constrained space between lines effectively.',
@@ -98,6 +100,11 @@ async function startServer() {
 Analyze the following football match tracking data with rigorous academic depth (referencing concepts from Gabbett ACWR models, Osgnach metabolic power, and Fernández-Bornn pitch control).
 Do NOT use emojis, em dashes (—), or generic hype. Maintain professional academic rigor.
 
+CRITICAL ACADEMIC INTEGRITY DIRECTIVE:
+You must NOT state that "NeuroPitch detects players from uploaded football videos using YOLOv8 and tracks them using ByteTrack" as that would be unsupported.
+Instead, your executive summary and methodology disclosure must clearly state:
+"The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage."
+
 Match Summary:
 ${JSON.stringify(matchSummary || {}, null, 2)}
 
@@ -109,7 +116,8 @@ Analytical Focus: ${tacticalFocus || 'Comprehensive Tactical Structure & Workloa
 Format your response strictly as valid JSON matching this schema:
 {
   "source": "gemini_ai_model",
-  "executiveSummary": "string",
+  "methodologyDisclosure": "The current implementation provides a football analytics and visualization platform built around structured tracking data, with a simulated tracking-data layer used for demonstrating the analytical pipeline. Integration of real computer-vision inference remains a future implementation stage.",
+  "executiveSummary": "string (must include the methodology note regarding structured/simulated tracking layer and future CV inference stage)",
   "tacticalOrganization": {
     "possessionPhase": "string",
     "defensiveStructure": "string",
